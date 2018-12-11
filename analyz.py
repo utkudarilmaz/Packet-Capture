@@ -2,6 +2,7 @@ from scapy.all import *
 from influxdb import InfluxDBClient
 import os
 import time
+import datetime
 
 try:
     client = InfluxDBClient(host='172.17.0.3', port=8086, username='test', password='123456')
@@ -32,15 +33,11 @@ host = {}
 
 while True:
 
-
     files = os.listdir()
     files.sort()
 
-    if len(files) > 1:
+    if len(files) > 2:
         file = files[0]
-
-        logs = []
-        target = ""
 
         a = rdpcap(file)
 
@@ -61,10 +58,10 @@ while True:
                                  'source': source,
                                  'target': target,
                              },
+                             'time': datetime.datetime.utcnow(),
                              "fields": {
                                  "value": float(1),
-                             }
-                             # 'time': a[]
+                             },
                          }]
                          client.write_points(log)
                     else:
@@ -76,37 +73,3 @@ while True:
         os.remove(file)
     else:
         continue
-
-
-# while True:
-#
-#
-#     files = os.listdir()
-#     files.sort()
-#
-#     if len(files) > 1:
-#         file = files[0]
-#
-#         a = rdpcap(file)
-#
-#         for i in range(len(a)):
-#
-#             if a[i].type == 2048:
-#
-#                 source = a[i][IP].src
-#
-#                 if a[i][ICMP].type == 8:
-                    # if source in host:
-                    #     host[source] = host[source] + 1
-                    # else :
-                    #     host[source] = 1
-#                 else:
-#                     continue
-#             else:
-#                 continue
-#
-#         print(host)
-#         os.remove(file)
-#
-#     else:
-#         continue
