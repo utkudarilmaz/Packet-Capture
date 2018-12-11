@@ -4,7 +4,7 @@ import os
 import time
 
 try:
-    client = InfluxDBClient(host='172.17.0.2', port=8086, username='test', password='123456')
+    client = InfluxDBClient(host='172.17.0.3', port=8086, username='test', password='123456')
     client.switch_database('test')
 except e:
     print(e)
@@ -51,36 +51,29 @@ while True:
                 source = a[i][IP].src
                 target = a[i][IP].dst
 
+                header = "logs"
+
                 try:
                     if a[i][ICMP].type == 8:
-                         if source in host:
-                             host[source] = host[source] + 1
-                         else :
-                             host[source] = 1
+                         log = [{
+                             'measurement': header,
+                             'tags': {
+                                 'source': source,
+                                 'target': target,
+                             },
+                             "fields": {
+                                 "value": float(1),
+                             }
+                             # 'time': a[]
+                         }]
+                         client.write_points(log)
                     else:
                         continue
                 except IndexError:
                     continue
             else:
                 continue
-
-        for k, v in host.items():
-            log = {
-                'measurement': 'icmp',
-                'tags': {
-                    'source': k,
-                    'target': target,
-                },
-                "fields": {
-                    "value": float(v),
-                },
-                # 'time': a[]
-            }
-            logs.append(log)
-
-        client.write_points(logs)
         os.remove(file)
-
     else:
         continue
 
