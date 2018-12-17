@@ -1,2 +1,4 @@
 # Packet-Capture
-ICMP Packet Capture Script
+
+Collect ICMP packet details using tshark and save these to InfluxDB.
+
